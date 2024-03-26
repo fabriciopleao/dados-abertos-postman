@@ -1,0 +1,126 @@
+{
+	"info": {
+		"_postman_id": "5f513de9-cea9-48b4-bdda-dfa2918677b4",
+		"name": "dados_abertos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28761137"
+	},
+	"item": [
+		{
+			"name": "Listar blocos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"if (jsonData && jsonData.dados && jsonData.dados.length > 0) {\r",
+							"    var dados = jsonData.dados[0];\r",
+							"    pm.environment.set(\"id\", dados.id);\r",
+							"    pm.environment.set(\"nome\", dados.nome);\r",
+							"    pm.environment.set(\"idLegislatura\", dados.idLegislatura);\r",
+							"    console.log(\"Valores guardados:\");\r",
+							"    console.log(\"ID: \" + dados.id);\r",
+							"    console.log(\"Nome: \" + dados.nome);\r",
+							"    console.log(\"ID da Legislatura: \" + dados.idLegislatura);\r",
+							"} else {\r",
+							"    console.log(\"Erro: Nenhum dado encontrado na resposta.\");\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlBlocos}}",
+					"host": [
+						"{{urlBlocos}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar bloco ID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Defina os detalhes da sua solicitação\r",
+							"const requestDetails = {\r",
+							"    url: 'https://dadosabertos.camara.leg.br/api/v2/blocos',\r",
+							"    method: 'GET', // ou 'POST', 'PUT', etc., conforme necessário\r",
+							"    header: {\r",
+							"        'Content-Type': 'application/json',\r",
+							"        // Adicione outros headers conforme necessário\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"// Envie a solicitação\r",
+							"pm.sendRequest(requestDetails, function (err, res) {\r",
+							"    if (err) {\r",
+							"        console.error('Erro ao enviar a solicitação:', err);\r",
+							"    } else {\r",
+							"        // Analise a resposta JSON\r",
+							"        const jsonData = res.json();\r",
+							"\r",
+							"        if (jsonData && jsonData.dados && jsonData.dados.length > 0) {\r",
+							"            const dados = jsonData.dados[0];\r",
+							"            pm.environment.set(\"id\", dados.id);\r",
+							"            pm.environment.set(\"nome\", dados.nome);\r",
+							"            pm.environment.set(\"idLegislatura\", dados.idLegislatura);\r",
+							"            console.log(\"Valores guardados:\");\r",
+							"            console.log(\"ID: \" + dados.id);\r",
+							"            console.log(\"Nome: \" + dados.nome);\r",
+							"            console.log(\"ID da Legislatura: \" + dados.idLegislatura);\r",
+							"        } else {\r",
+							"            console.log(\"Erro: Nenhum dado encontrado na resposta.\");\r",
+							"        }\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Federação Brasil da Esperança - Fe Brasil\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlBlocos}}/{{id}}",
+					"host": [
+						"{{urlBlocos}}"
+					],
+					"path": [
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
