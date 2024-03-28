@@ -7,27 +7,15 @@
 	},
 	"item": [
 		{
-			"name": "Listar blocos",
+			"name": "Listar todos blocos partidários",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var jsonData = pm.response.json();\r",
-							"\r",
-							"if (jsonData && jsonData.dados && jsonData.dados.length > 0) {\r",
-							"    var dados = jsonData.dados[0];\r",
-							"    pm.environment.set(\"id\", dados.id);\r",
-							"    pm.environment.set(\"nome\", dados.nome);\r",
-							"    pm.environment.set(\"idLegislatura\", dados.idLegislatura);\r",
-							"    console.log(\"Valores guardados:\");\r",
-							"    console.log(\"ID: \" + dados.id);\r",
-							"    console.log(\"Nome: \" + dados.nome);\r",
-							"    console.log(\"ID da Legislatura: \" + dados.idLegislatura);\r",
-							"} else {\r",
-							"    console.log(\"Erro: Nenhum dado encontrado na resposta.\");\r",
-							"}\r",
-							""
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -47,7 +35,7 @@
 			"response": []
 		},
 		{
-			"name": "Listar e guardar dados",
+			"name": "Listar e guardar dados partidários",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -55,8 +43,8 @@
 						"exec": [
 							"pm.sendRequest(\"https://dadosabertos.camara.leg.br/api/v2/blocos\", function (err, response) {\r",
 							"    \r",
-							"    pm.environment.set(\"id\", response.json().dados[3].id);\r",
-							"    pm.environment.set(\"nome\", response.json().dados[3].nome);\r",
+							"    pm.environment.set(\"id\", response.json().dados[0].id);\r",
+							"    pm.environment.set(\"nome\", response.json().dados[0].nome);\r",
 							"    pm.environment.set(\"idLegislatura\", response.json().dados[0].idLegislatura);\r",
 							"\r",
 							"});"
@@ -73,9 +61,19 @@
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Body matches string\", function () {\r",
+							"pm.test(\"Body matches id\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"584\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches nome\", function () {\r",
 							"    pm.expect(pm.response.text()).to.include(\"Federação Brasil da Esperança - Fe Brasil\");\r",
-							"});"
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches idLegislatura\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"57\");\r",
+							"});\r",
+							"\r",
+							"pm.variables.get(\"id\");"
 						],
 						"type": "text/javascript",
 						"packages": {}
